@@ -127,7 +127,7 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
-      <ImportLibrary>$(SolutionDir)/BIN/Libs/$(OutDir)CAN_VSCOM.lib</ImportLibrary>
+      <ImportLibrary>$(SolutionDir)/BIN/Libs/$(OutDir)CAN_GENERIC.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
       <ProgramDatabaseFile>$(SolutionDir)/bin/DumpFiles/$(IntDir)/PDB/$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
@@ -159,8 +159,8 @@
     <Link>
       <AdditionalOptions>"$(SolutionDir)/BIN/Libs/$(OutDir)DataTypes.lib"
 "$(SolutionDir)/BIN/Libs/$(OutDir)Utils.lib" %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>"$(SolutionDir)CAN_VSCOM\EXTERNAL\vs_can_api.lib"</AdditionalDependencies>
-      <OutputFile>$(SolutionDir)/bin/$(OutDir)CAN_VSCOM.dll</OutputFile>
+      <AdditionalDependencies>"$(SolutionDir)CAN_GENERIC\EXTERNAL\vs_can_api.lib"</AdditionalDependencies>
+      <OutputFile>$(SolutionDir)/bin/$(OutDir)CAN_GENERIC.dll</OutputFile>
       <AdditionalLibraryDirectories>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
@@ -172,7 +172,7 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
-      <ImportLibrary>$(SolutionDir)/BIN/Libs/$(OutDir)CAN_VSCOM.lib</ImportLibrary>
+      <ImportLibrary>$(SolutionDir)/BIN/Libs/$(OutDir)CAN_GENERIC.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
       <IgnoreSpecificDefaultLibraries>daouuid.lib</IgnoreSpecificDefaultLibraries>
       <ProgramDatabaseFile>$(SolutionDir)/bin/DumpFiles/$(IntDir)/PDB/$(TargetName).pdb</ProgramDatabaseFile>
@@ -190,7 +190,7 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <PrecompiledHeader>Create</PrecompiledHeader>
-      <PrecompiledHeaderFile>CAN_VSCOM_StdAfx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>CAN_GENERIC_stdafx.h</PrecompiledHeaderFile>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <ObjectFileName>$(SolutionDir)/bin/DumpFiles/$(IntDir)/OBJ/$(TargetName)/</ObjectFileName>
@@ -204,8 +204,8 @@
     <Link>
       <AdditionalOptions>"$(SolutionDir)/BIN/Libs/$(OutDir)DataTypes.lib"
 "$(SolutionDir)/BIN/Libs/$(OutDir)Utils.lib" %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>"$(SolutionDir)CAN_VSCOM\EXTERNAL\vs_can_api.lib";%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(SolutionDir)/bin/$(OutDir)CAN_VSCOM.dll</OutputFile>
+      <AdditionalDependencies>"$(SolutionDir)CAN_GENERIC\EXTERNAL\vs_can_api.lib";%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(SolutionDir)/bin/$(OutDir)CAN_GENERIC.dll</OutputFile>
       <AdditionalLibraryDirectories>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
@@ -217,7 +217,7 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
-      <ImportLibrary>$(SolutionDir)/BIN/Libs/$(OutDir)CAN_VSCOM.lib</ImportLibrary>
+      <ImportLibrary>$(SolutionDir)/BIN/Libs/$(OutDir)CAN_GENERIC.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
       <IgnoreSpecificDefaultLibraries>daouuid.lib</IgnoreSpecificDefaultLibraries>
       <ProgramDatabaseFile>$(SolutionDir)/bin/DumpFiles/$(IntDir)/PDB/$(TargetName).pdb</ProgramDatabaseFile>
@@ -236,7 +236,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\busmaster_softing\can_utils.h" />
+    <ClInclude Include="EXTERNAL\can_utils.h" />
     <ClInclude Include="..\DIL_Interface\HardwareListingCAN.h" />
     <ClInclude Include="CAN_GENERIC.h" />
     <ClInclude Include="CAN_GENERIC_Extern.h" />

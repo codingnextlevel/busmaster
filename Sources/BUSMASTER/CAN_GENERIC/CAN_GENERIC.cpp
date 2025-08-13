@@ -14,7 +14,7 @@
  */
 
 /**
- * \file      CAN_SOFTING.cpp
+ * \file      CAN_GENERIC.cpp
  * \author
  * \copyright Copyright (c) 2012, ETAS GmbH. All rights reserved.
  */
@@ -23,17 +23,6 @@
 
 #include "CAN_GENERIC_stdafx.h"
 #include "CAN_GENERIC.h"
-//#include "include/Error.h"
-//#include "include/basedefs.h"
-//#include "DataTypes/Base_WrapperErrorLogger.h"
-//#include "DataTypes/MsgBufAll_DataTypes.h"
-//#include "DataTypes/DIL_Datatypes.h"
-//#include "Include/BaseDefs.h"
-//#include "Include/CAN_Error_Defs.h"
-//#include "Include/Struct_CAN.h"
-//#include "Include/CanUsbDefs.h"
-//#include "Include/DIL_CommonDefs.h"
-//#include "DIL_Interface/BaseDIL_CAN_Controller.h"
 
 #include "BaseDIL_CAN_Controller.h"
 #include "DILPluginHelperDefs.h"
@@ -45,33 +34,30 @@
 
 #include "EXTERNAL/can_utils.h"
 
+// CCAN_GENERIC
 
-//#define CAN_DRIVER_DEBUG
-
-// CCAN_VSCOM
-
-BEGIN_MESSAGE_MAP(CCAN_SOFTING, CWinApp)
+BEGIN_MESSAGE_MAP(CCAN_GENERIC, CWinApp)
 END_MESSAGE_MAP()
 
 
 /**
- * CCAN_VSCOM construction
+ * CCAN_GENERIC construction
  */
-CCAN_SOFTING::CCAN_SOFTING()
+CCAN_GENERIC::CCAN_GENERIC()
 {
     // TODO: add construction code here,
     // Place all significant initialization in InitInstance
 }
 
 
-// The one and only CCAN_VSCOM object
-CCAN_SOFTING theApp;
+// The one and only CCAN_GENERIC object
+CCAN_GENERIC theApp;
 
 
 /**
- * CCAN_VSCOM initialization
+ * CCAN_GENERIC initialization
  */
-BOOL CCAN_SOFTING::InitInstance()
+BOOL CCAN_GENERIC::InitInstance()
 {
     CWinApp::InitInstance();
 
@@ -151,8 +137,8 @@ static HWND sg_hOwnerWnd = nullptr;
 
 static SYSTEMTIME sg_CurrSysTime;
 
-/* CDIL_VSCOM class definition */
-class CDIL_CAN_SOFTING : public CBaseDIL_CAN_Controller
+/* CDIL_CAN_GENERIC class definition */
+class CDIL_CAN_GENERIC : public CBaseDIL_CAN_Controller
 {
 public:
     /* STARTS IMPLEMENTATION OF THE INTERFACE FUNCTIONS... */
@@ -184,7 +170,7 @@ public:
     HRESULT CAN_SetHardwareChannel(PSCONTROLLER_DETAILS,DWORD dwDriverId,bool bIsHardwareListed, unsigned int unChannelCount);
 };
 
-CDIL_CAN_SOFTING* g_pouDIL_CAN_VSCOM = nullptr;
+CDIL_CAN_GENERIC* g_pouDIL_CAN_GENERIC = nullptr;
 
 
 #define CALLBACK_TYPE __stdcall
@@ -207,9 +193,9 @@ static BOOL bRemoveMapEntry(const SACK_MAP& RefObj, UINT& ClientID);
 
 extern "C"{
 static void __stdcall bm_send_can_msg(MY_STCAN_MSG_t* can_msg);
-static void initSoftingDriver();
-static void deinitSoftingDriver();
-static int loadSoftingDriver(char* dllFullPath);
+static void initGenericDriver();
+static void deinitGenericDriver();
+static int loadGenericDriver(char* dllFullPath);
 static void OnMsg_All(STCAN_MSG RxMsg);
 
 static void Trace(char* textMsg);
@@ -227,15 +213,15 @@ USAGEMODE HRESULT GetIDIL_CAN_Controller(void** ppvInterface)
     HRESULT hResult;
 
     hResult = S_OK;
-    if (!g_pouDIL_CAN_VSCOM)
+    if (!g_pouDIL_CAN_GENERIC)
     {
-        g_pouDIL_CAN_VSCOM = new CDIL_CAN_SOFTING;
-        if (!(g_pouDIL_CAN_VSCOM))
+        g_pouDIL_CAN_GENERIC = new CDIL_CAN_GENERIC;
+        if (!(g_pouDIL_CAN_GENERIC))
         {
             hResult = S_FALSE;
         }
     }
-    *ppvInterface = (void*)g_pouDIL_CAN_VSCOM;  /* Doesn't matter even if g_pouDIL_CAN_VSCOM is null */
+    *ppvInterface = (void*)g_pouDIL_CAN_GENERIC;  /* Doesn't matter even if g_pouDIL_CAN_GENERIC is null */
 
     return(hResult);
 }
@@ -245,7 +231,7 @@ USAGEMODE HRESULT GetIDIL_CAN_Controller(void** ppvInterface)
  *
  * Sets the application params.
  */
-HRESULT CDIL_CAN_SOFTING::CAN_SetAppParams(HWND hWndOwner)
+HRESULT CDIL_CAN_GENERIC::CAN_SetAppParams(HWND hWndOwner)
 {
     
 
@@ -262,7 +248,7 @@ HRESULT CDIL_CAN_SOFTING::CAN_SetAppParams(HWND hWndOwner)
  *
  * Unloads the driver library.
  */
-HRESULT CDIL_CAN_SOFTING::CAN_UnloadDriverLibrary(void)
+HRESULT CDIL_CAN_GENERIC::CAN_UnloadDriverLibrary(void)
 {
 
     //int ret = MessageBox(NULL, (LPCSTR)"CAN_UnloadDriverLibrary", (LPCSTR)"CAN_UnloadDriverLibrary", MB_OK);
@@ -275,7 +261,7 @@ HRESULT CDIL_CAN_SOFTING::CAN_UnloadDriverLibrary(void)
  *
  * Registers the buffer pBufObj to the client ClientID
  */
-HRESULT CDIL_CAN_SOFTING::CAN_ManageMsgBuf(BYTE bAction, DWORD ClientID, CBaseCANBufFSE* pBufObj)
+HRESULT CDIL_CAN_GENERIC::CAN_ManageMsgBuf(BYTE bAction, DWORD ClientID, CBaseCANBufFSE* pBufObj)
 {
     HRESULT hResult = S_FALSE;
     UINT unClientIndex;
@@ -322,8 +308,6 @@ HRESULT CDIL_CAN_SOFTING::CAN_ManageMsgBuf(BYTE bAction, DWORD ClientID, CBaseCA
                 }
                 hResult = S_OK;
             }
-            ////else
-            ////  ASSERT(false);
         }
         else
         {
@@ -351,7 +335,7 @@ HRESULT CDIL_CAN_SOFTING::CAN_ManageMsgBuf(BYTE bAction, DWORD ClientID, CBaseCA
  * Registers a client to the DIL. ClientID will have client id
  * which will be used for further client related calls
  */
-HRESULT CDIL_CAN_SOFTING::CAN_RegisterClient(BOOL bRegister, DWORD& ClientID, char* pacClientName)
+HRESULT CDIL_CAN_GENERIC::CAN_RegisterClient(BOOL bRegister, DWORD& ClientID, char* pacClientName)
 {
     HRESULT hResult = S_FALSE;
     INT Index;
@@ -374,14 +358,6 @@ HRESULT CDIL_CAN_SOFTING::CAN_RegisterClient(BOOL bRegister, DWORD& ClientID, ch
                 }
                 else
                 {
-                    /*if (!bClientExist(CAN_MONITOR_NODE, Index))
-                    {
-                        Index = sg_unClientCnt + 1;
-                    }
-                    else
-                    {
-                        Index = sg_unClientCnt;
-                    }*/
                     Index = sg_unClientCnt;
                     ClientID = dwGetAvailableClientSlot();
                     _tcscpy(sg_asClientToBufMap[Index].m_acClientName, pacClientName);
@@ -423,12 +399,11 @@ HRESULT CDIL_CAN_SOFTING::CAN_RegisterClient(BOOL bRegister, DWORD& ClientID, ch
  * and will be set whenever there is change in the controller
  * status.
  */
-HRESULT CDIL_CAN_SOFTING::CAN_GetCntrlStatus(const HANDLE& hEvent, UINT& unCntrlStatus)
+HRESULT CDIL_CAN_GENERIC::CAN_GetCntrlStatus(const HANDLE& hEvent, UINT& unCntrlStatus)
 {
     (void)unCntrlStatus;
     (void)hEvent;
 
-    //unCntrlStatus = defCONTROLLER_ACTIVE; //Temporary solution. TODO
     return(S_OK);
 }
 
@@ -443,7 +418,7 @@ HRESULT CDIL_CAN_SOFTING::CAN_GetCntrlStatus(const HANDLE& hEvent, UINT& unCntrl
  *
  * Loads BOA related libraries. Updates BOA API pointers
  */
-HRESULT CDIL_CAN_SOFTING::CAN_LoadDriverLibrary(void)
+HRESULT CDIL_CAN_GENERIC::CAN_LoadDriverLibrary(void)
 {
 
     char path[MAX_PATH];
@@ -475,25 +450,7 @@ HRESULT CDIL_CAN_SOFTING::CAN_LoadDriverLibrary(void)
     path_only[len2 - len] = 0;
     filename[len - 4] = 0;
     sprintf(imp_dll_path, "%s%s_imp.dll", path_only, filename);
-    //ret = MessageBox(NULL, (LPCSTR)imp_dll_path, (LPCSTR)"dll name", MB_OK);
-    //int ret = MessageBox(NULL, (LPCSTR)path_only, (LPCSTR)"path only", MB_OK);
-
-    
-    
-    
-    ret = loadSoftingDriver(imp_dll_path);
-    /*
-    if (access(imp_dll_path, F_OK) == 0) {
-        //int ret = MessageBox(NULL, (LPCSTR)"File exists", (LPCSTR)imp_dll_path, MB_OK);
-        
-    }
-    else {
-        //int ret = MessageBox(NULL, (LPCSTR)"File does NOT exists!", (LPCSTR)imp_dll_path, MB_OK);
-
-    }
-    */
-    //return(S_OK);
-    //return(-1);
+    ret = loadGenericDriver(imp_dll_path);
     return ret;
 }
 
@@ -503,7 +460,7 @@ HRESULT CDIL_CAN_SOFTING::CAN_LoadDriverLibrary(void)
 * \param         void
 * \return        S_OK if the open driver call successfull otherwise S_FALSE
 */
-HRESULT CDIL_CAN_SOFTING::CAN_PerformInitOperations(void)
+HRESULT CDIL_CAN_GENERIC::CAN_PerformInitOperations(void)
 {
     DWORD dwClientID;
 
@@ -524,14 +481,10 @@ HRESULT CDIL_CAN_SOFTING::CAN_PerformInitOperations(void)
 * \param         void
 * \return        S_OK if the CAN_StopHardware call successfull otherwise S_FALSE
 */
-HRESULT CDIL_CAN_SOFTING::CAN_PerformClosureOperations(void)
+HRESULT CDIL_CAN_GENERIC::CAN_PerformClosureOperations(void)
 {
     HRESULT hResult = CAN_StopHardware();
 
-    // ------------------------------------
-    // Close driver
-    // ------------------------------------
-    //CanDownDriver();
 
     // Remove all the existing clients
     while (sg_unClientCnt > 0)
@@ -553,7 +506,7 @@ HRESULT CDIL_CAN_SOFTING::CAN_PerformClosureOperations(void)
 * \param[out]    QueryTickCount, is LARGE_INTEGER
 * \return        S_OK for success
 */
-HRESULT CDIL_CAN_SOFTING::CAN_GetTimeModeMapping(SYSTEMTIME& CurrSysTime, UINT64& /* TimeStamp */, LARGE_INTEGER& /* QueryTickCount */)
+HRESULT CDIL_CAN_GENERIC::CAN_GetTimeModeMapping(SYSTEMTIME& CurrSysTime, UINT64& /* TimeStamp */, LARGE_INTEGER& /* QueryTickCount */)
 {
     CurrSysTime = sg_CurrSysTime;
     return S_OK;
@@ -575,7 +528,7 @@ extern "C"{
 * \param[out]    nCount , is INT contains the selected channel count.
 * \return        S_OK for success, S_FALSE for failure
 */
-HRESULT CDIL_CAN_SOFTING::CAN_ListHwInterfaces(INTERFACE_HW_LIST& asSelHwInterface, INT& nCount,PSCONTROLLER_DETAILS InitData)
+HRESULT CDIL_CAN_GENERIC::CAN_ListHwInterfaces(INTERFACE_HW_LIST& asSelHwInterface, INT& nCount,PSCONTROLLER_DETAILS InitData)
 {
     USES_CONVERSION;
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
@@ -587,13 +540,6 @@ HRESULT CDIL_CAN_SOFTING::CAN_ListHwInterfaces(INTERFACE_HW_LIST& asSelHwInterfa
 
     if (numOfDevices > 16) { numOfDevices = 16; }
     for (int i = 0; i < numOfDevices; i++) {
-        /*
-        device_list[i].HwVersion = dev_list[i].HwVersion;
-        device_list[i].SwVersion = dev_list[i].SwVersion;
-        device_list[i].SerialNr = dev_list[i].SerialNr;
-        device_list[i].Type = dev_list[i].Type;
-        */
-
         asSelHwInterface[i].m_dwIdInterface = i;
         char tmp_desc[1024];
         sprintf(tmp_desc, "Generic_device S/N: %d", (uint32_t)dev_list[i].SerialNr);
@@ -601,15 +547,8 @@ HRESULT CDIL_CAN_SOFTING::CAN_ListHwInterfaces(INTERFACE_HW_LIST& asSelHwInterfa
         asSelHwInterface[i].m_acDescription = tmp_str;
     }
 
-    //nCount = numOfDevices;
     nCount = 1;
-    //set the current number of channels
-    //sg_nNoOfChannels = numOfDevices;
     sg_nNoOfChannels = 1;
-
-
-    //asSelHwInterface[0].m_dwIdInterface = 0;
-    //asSelHwInterface[0].m_acDescription = "VScom CAN Device";
 
     
     sg_bCurrState = STATE_HW_INTERFACE_LISTED;
@@ -637,7 +576,7 @@ HRESULT CDIL_CAN_SOFTING::CAN_ListHwInterfaces(INTERFACE_HW_LIST& asSelHwInterfa
 * \param[out]    nCount , is INT contains the selected channel count.
 * \return        S_OK for success, S_FALSE for failure
 */
-HRESULT CDIL_CAN_SOFTING::CAN_SelectHwInterface(const INTERFACE_HW_LIST& /*asSelHwInterface*/, INT /*nCount*/)
+HRESULT CDIL_CAN_GENERIC::CAN_SelectHwInterface(const INTERFACE_HW_LIST& /*asSelHwInterface*/, INT /*nCount*/)
 {
     USES_CONVERSION;
 
@@ -652,7 +591,7 @@ HRESULT CDIL_CAN_SOFTING::CAN_SelectHwInterface(const INTERFACE_HW_LIST& /*asSel
 * \param         void
 * \return        S_OK if CAN_ResetHardware call is success, S_FALSE for failure
 */
-HRESULT CDIL_CAN_SOFTING::CAN_DeselectHwInterface(void)
+HRESULT CDIL_CAN_GENERIC::CAN_DeselectHwInterface(void)
 {
     VALIDATE_VALUE_RETURN_VAL(sg_bCurrState, STATE_HW_INTERFACE_SELECTED, ERR_IMPROPER_STATE);
 
@@ -735,7 +674,7 @@ void* GetSpeed(long lBaudRate)
 * \param[in]     Length , is INT
 * \return        S_OK for success
 */
-HRESULT CDIL_CAN_SOFTING::CAN_SetConfigData(PSCONTROLLER_DETAILS ConfigFile, int Length)
+HRESULT CDIL_CAN_GENERIC::CAN_SetConfigData(PSCONTROLLER_DETAILS ConfigFile, int Length)
 {
     (void)Length;
     SCONTROLLER_DETAILS* cntrl;
@@ -978,90 +917,16 @@ void on_my_can_msg_send_to_app(MY_STCAN_MSG_t *msg){
 * \param         void
 * \return        S_OK for success, S_FALSE for failure
 */
-HRESULT CDIL_CAN_SOFTING::CAN_StartHardware(void)
+HRESULT CDIL_CAN_GENERIC::CAN_StartHardware(void)
 {
     USES_CONVERSION;
     HRESULT hResult = S_FALSE;
 
-    //VALIDATE_VALUE_RETURN_VAL(sg_bCurrState, STATE_HW_INTERFACE_SELECTED, ERR_IMPROPER_STATE);
-
-    /* If no device available, exit */
-    
-    /*
-    if (strcmp(sg_VSCanCfg.szLocation, "") == 0 ||
-            strcmp(sg_VSCanCfg.szLocation, "\\\\.\\") == 0  )
-    {
-        return S_FALSE;
-    }
-
-    if (sg_VSCanCfg.bDebug)
-    {
-        VSCAN_Ioctl(0, VSCAN_IOCTL_SET_DEBUG_MODE, VSCAN_DEBUG_MODE_FILE);
-        VSCAN_Ioctl(0, VSCAN_IOCTL_SET_DEBUG, VSCAN_DEBUG_HIGH);
-    }
-    else
-    {
-        VSCAN_Ioctl(0, VSCAN_IOCTL_SET_DEBUG, VSCAN_DEBUG_NONE);
-    }
-    */
     sg_VSCanCfg.hCan = 1;
-    
-    
-    //sg_VSCanCfg.hCan = VSCAN_Open(sg_VSCanCfg.szLocation, sg_VSCanCfg.dwMode);
     
     if (sg_VSCanCfg.hCan > 0)
     {
-
-    /*
-        if (VSCAN_Ioctl(sg_VSCanCfg.hCan, VSCAN_IOCTL_SET_TIMESTAMP, sg_VSCanCfg.bTimestamps?VSCAN_TIMESTAMP_ON:VSCAN_TIMESTAMP_OFF) != VSCAN_ERR_OK)
-        {
-            return (S_FALSE);
-        }
-
-        if (VSCAN_Ioctl(sg_VSCanCfg.hCan, VSCAN_IOCTL_SET_FILTER_MODE, sg_VSCanCfg.bDualFilter?VSCAN_FILTER_MODE_DUAL:VSCAN_FILTER_MODE_SINGLE) != VSCAN_ERR_OK)
-        {
-            return (S_FALSE);
-        }
-
-        if (VSCAN_Ioctl(sg_VSCanCfg.hCan, VSCAN_IOCTL_SET_ACC_CODE_MASK, &sg_VSCanCfg.codeMask) != VSCAN_ERR_OK)
-        {
-            return (S_FALSE);
-        }
-
-        if (sg_VSCanCfg.vSpeed)
-        {
-            if (VSCAN_Ioctl(sg_VSCanCfg.hCan, VSCAN_IOCTL_SET_SPEED, (void*)sg_VSCanCfg.vSpeed) != VSCAN_ERR_OK)
-            {
-                return (S_FALSE);
-            }
-        }
-        else
-        {
-            if (VSCAN_Ioctl(sg_VSCanCfg.hCan, VSCAN_IOCTL_SET_BTR, &sg_VSCanCfg.btr) != VSCAN_ERR_OK)
-            {
-                return (S_FALSE);
-            }
-        }
-
-        sg_hEventRecv = CreateEvent(nullptr, FALSE, FALSE, nullptr);
-        if (sg_hEventRecv == nullptr)
-        {
-            hResult = S_FALSE;
-        }
-
-        if (VSCAN_SetRcvEvent(sg_VSCanCfg.hCan, sg_hEventRecv) != VSCAN_ERR_OK)
-        {
-            hResult = S_FALSE;
-        }
-
-        sg_hReadThread = CreateThread(nullptr, 0, CanRxEvent, nullptr, 0, &sg_dwReadThreadId);
-        if (sg_hReadThread == nullptr)
-        {
-            hResult = S_FALSE;
-        }
-        */
-
-        initSoftingDriver();
+        initGenericDriver();
 
         hResult = S_OK;
 
@@ -1080,9 +945,9 @@ HRESULT CDIL_CAN_SOFTING::CAN_StartHardware(void)
 * \param         void
 * \return        S_OK for success, S_FALSE for failure
 */
-HRESULT CDIL_CAN_SOFTING::CAN_StopHardware(void)
+HRESULT CDIL_CAN_GENERIC::CAN_StopHardware(void)
 {
-    VALIDATE_VALUE_RETURN_VAL(sg_bCurrState, STATE_CONNECTED, ERR_IMPROPER_STATE);
+    VALIDATE_VALUE_RETURN_val(sg_bCurrState, STATE_CONNECTED, ERR_IMPROPER_STATE);
 
     if (sg_hReadThread != nullptr)
     {
@@ -1098,11 +963,10 @@ HRESULT CDIL_CAN_SOFTING::CAN_StopHardware(void)
 
     if (sg_VSCanCfg.hCan > 0)
     {
-        //VSCAN_Close(sg_VSCanCfg.hCan);
         sg_VSCanCfg.hCan = 0;
     }
 
-    deinitSoftingDriver();
+    deinitGenericDriver();
 
     return(S_OK);
 }
@@ -1112,7 +976,7 @@ HRESULT CDIL_CAN_SOFTING::CAN_StopHardware(void)
 * \param[out]    StatusData, is s_STATUSMSG structure
 * \return        S_OK for success, S_FALSE for failure
 */
-HRESULT CDIL_CAN_SOFTING::CAN_GetCurrStatus(STATUSMSG& StatusData)
+HRESULT CDIL_CAN_GENERIC::CAN_GetCurrStatus(STATUSMSG& StatusData)
 {
     StatusData.wControllerStatus = NORMAL_ACTIVE;
     return(S_OK);
@@ -1123,7 +987,7 @@ HRESULT CDIL_CAN_SOFTING::CAN_GetCurrStatus(STATUSMSG& StatusData)
 * \param[out]    pouFlxTxMsgBuffer, is BYTE*
 * \return        S_OK for success, S_FALSE for failure
 */
-HRESULT CDIL_CAN_SOFTING::CAN_GetTxMsgBuffer(BYTE*& /*pouFlxTxMsgBuffer*/)
+HRESULT CDIL_CAN_GENERIC::CAN_GetTxMsgBuffer(BYTE*& /*pouFlxTxMsgBuffer*/)
 {
     return(S_OK);
 }
@@ -1134,7 +998,7 @@ HRESULT CDIL_CAN_SOFTING::CAN_GetTxMsgBuffer(BYTE*& /*pouFlxTxMsgBuffer*/)
 * \param[in]     sMessage is the application specific CAN message structure
 * \return        S_OK for success, S_FALSE for failure
 */
-HRESULT CDIL_CAN_SOFTING::CAN_SendMsg(DWORD dwClientID, const STCAN_MSG& sMessage)
+HRESULT CDIL_CAN_GENERIC::CAN_SendMsg(DWORD dwClientID, const STCAN_MSG& sMessage)
 {
     VSCAN_MSG msg;
     DWORD dwTemp;
@@ -1169,7 +1033,6 @@ HRESULT CDIL_CAN_SOFTING::CAN_SendMsg(DWORD dwClientID, const STCAN_MSG& sMessag
             //generic driver send can message
             OnMsg_All(sMessage);
 
-            //if (VSCAN_Write(sg_VSCanCfg.hCan, &msg, 1, &dwTemp) == VSCAN_ERR_OK && dwTemp == 1)
             if(1)
             {
                 static STCANDATA can_data;
@@ -1202,7 +1065,7 @@ HRESULT CDIL_CAN_SOFTING::CAN_SendMsg(DWORD dwClientID, const STCAN_MSG& sMessag
 * \param[out]    BusInfo, is BYTE
 * \return        S_OK for success, S_FALSE for failure
 */
-HRESULT CDIL_CAN_SOFTING::CAN_GetBusConfigInfo(BYTE* /*BusInfo*/)
+HRESULT CDIL_CAN_GENERIC::CAN_GetBusConfigInfo(BYTE* /*BusInfo*/)
 {
     return(S_OK);
 }
@@ -1213,7 +1076,7 @@ HRESULT CDIL_CAN_SOFTING::CAN_GetBusConfigInfo(BYTE* /*BusInfo*/)
 * \param[in]     nLength, is INT
 * \return        S_OK for success, S_FALSE for failure
 */
-HRESULT CDIL_CAN_SOFTING::CAN_GetLastErrorString(std::string& /* acErrorStr */)
+HRESULT CDIL_CAN_GENERIC::CAN_GetLastErrorString(std::string& /* acErrorStr */)
 {
     return WARN_DUMMY_API;
 }
@@ -1225,7 +1088,7 @@ HRESULT CDIL_CAN_SOFTING::CAN_GetLastErrorString(std::string& /* acErrorStr */)
 * \param[in]     eContrParam, indicates controller parameter
 * \return        S_OK for success, S_FALSE for failure
 */
-HRESULT CDIL_CAN_SOFTING::CAN_GetControllerParams(LONG& lParam, UINT nChannel, ECONTR_PARAM eContrParam)
+HRESULT CDIL_CAN_GENERIC::CAN_GetControllerParams(LONG& lParam, UINT nChannel, ECONTR_PARAM eContrParam)
 {
     HRESULT hResult;
 
@@ -1272,7 +1135,7 @@ HRESULT CDIL_CAN_SOFTING::CAN_GetControllerParams(LONG& lParam, UINT nChannel, E
     return hResult;
 }
 
-HRESULT CDIL_CAN_SOFTING::CAN_SetControllerParams(int /* nValue */, ECONTR_PARAM /* eContrparam */)
+HRESULT CDIL_CAN_GENERIC::CAN_SetControllerParams(int /* nValue */, ECONTR_PARAM /* eContrparam */)
 {
     return S_OK;
 }
@@ -1284,7 +1147,7 @@ HRESULT CDIL_CAN_SOFTING::CAN_SetControllerParams(int /* nValue */, ECONTR_PARAM
 * \param[in]     eContrParam, indicates controller parameter
 * \return        S_OK for success, S_FALSE for failure
 */
-HRESULT CDIL_CAN_SOFTING::CAN_GetErrorCount(SERROR_CNT& sErrorCnt, UINT nChannel, ECONTR_PARAM eContrParam)
+HRESULT CDIL_CAN_GENERIC::CAN_GetErrorCount(SERROR_CNT& sErrorCnt, UINT nChannel, ECONTR_PARAM eContrParam)
 {
     (void)eContrParam;
     (void)nChannel;
@@ -1474,7 +1337,7 @@ static BOOL bRemoveMapEntry(const SACK_MAP& RefObj, UINT& ClientID)
     }
     return bResult;
 }
-HRESULT CDIL_CAN_SOFTING::CAN_SetHardwareChannel(PSCONTROLLER_DETAILS,DWORD dwDriverId,bool bIsHardwareListed, unsigned int unChannelCount)
+HRESULT CDIL_CAN_GENERIC::CAN_SetHardwareChannel(PSCONTROLLER_DETAILS,DWORD dwDriverId,bool bIsHardwareListed, unsigned int unChannelCount)
 {
     return S_OK;
 }
@@ -1648,20 +1511,20 @@ bm_send_can_msg(MY_STCAN_MSG_t* can_msg) {
 
 }
 
-static void initSoftingDriver() {
+static void initGenericDriver() {
     if (bm_if_init_lib_p) {
         bm_if_init_lib_p(0);
     }
 }
 
-static void deinitSoftingDriver() {
+static void deinitGenericDriver() {
     if (bm_if_deinit_lib_p) {
         bm_if_deinit_lib_p(hModuleGenericDriver);
         Trace("driver dll deinit done.");
     }
 }
 
-static int loadSoftingDriver(char * dllFullPath) {
+static int loadGenericDriver(char * dllFullPath) {
     int ret = -1;
 
     /*
@@ -1672,7 +1535,7 @@ static int loadSoftingDriver(char * dllFullPath) {
 
 
     int ret = GetCurrentDirectory(PATH_BUF_SIZE, dllFullPath2);
-    snprintf(dllFullPath, PATH_BUF_SIZE, "%s\\libsofting_bm.dll", dllFullPath2);
+    snprintf(dllFullPath, PATH_BUF_SIZE, "%s\\libgeneric_bm.dll", dllFullPath2);
 
     Trace(dllFullPath);
     */
@@ -1681,7 +1544,7 @@ static int loadSoftingDriver(char * dllFullPath) {
     hModuleGenericDriver = LoadLibrary(dllFullPath);
     int err=GetLastError();
     if (hModuleGenericDriver) {
-        //Trace("libsofting_bm.dll Library loaded successfully.");
+        //Trace("libgeneric_bm.dll Library loaded successfully.");
 
         bm_if_init_lib_p = (bm_if_init_libPtr)GetProcAddress(hModuleGenericDriver, "bm_if_init_lib");
         bm_if_deinit_lib_p = (bm_if_deinit_libPtr)GetProcAddress(hModuleGenericDriver, "bm_if_deinit_lib");
@@ -1721,7 +1584,7 @@ static int loadSoftingDriver(char * dllFullPath) {
 
     }
     else {
-        Trace("libsofting_bm.dll Library - problem occured during loading!");
+        Trace("libgeneric_bm.dll Library - problem occured during loading!");
     }
 
     return ret;
