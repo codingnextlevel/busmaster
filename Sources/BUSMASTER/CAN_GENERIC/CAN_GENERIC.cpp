@@ -1573,13 +1573,6 @@ static int loadGenericDriver(char * dllFullPath) {
         }
 
         
-
-        /*
-        if(bm_if_on_can_msg_received_p){
-            MY_STCAN_MSG_t can_msg;
-            bm_if_on_can_msg_received_p(&can_msg);
-        }
-        */
         ret = 0;
 
     }
