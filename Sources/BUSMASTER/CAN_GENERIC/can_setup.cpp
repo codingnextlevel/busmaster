@@ -29,7 +29,6 @@
 #include <windowsx.h>
 #include "CAN_GENERIC.h"
 #include "resource.h"
-//#include "EXTERNAL/vs_can_api.h"
 
 
 #define MAX_DEVICES         256

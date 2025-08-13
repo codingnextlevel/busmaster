@@ -14,8 +14,8 @@
  */
 
 /**
- * \file      CAN_VSCOM.h
- * \brief     Exports API functions for MHS-Elektronik Tiny-CAN Hardware interface
+ * \file      CAN_GENERIC.h
+ * \brief     Exports API functions for Generic CAN Hardware interface
  * \author
  * \copyright Copyright (c) 2012, ETAS GmbH. All rights reserved.
  *
@@ -53,10 +53,10 @@ int WINAPI ShowCanVsComSetup(HWND hwnd, _VSCanCfg* cfg);
 /**
  * See CAN_VSCOM.cpp for the implementation of this class
  */
-class CCAN_SOFTING : public CWinApp
+class CCAN_GENERIC : public CWinApp
 {
 public:
-    CCAN_SOFTING();
+    CCAN_GENERIC();
 
     // Overrides
 public:
