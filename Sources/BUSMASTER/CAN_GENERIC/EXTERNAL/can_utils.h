@@ -1,8 +1,8 @@
 /*
  * can_utils.h
  *
- *  Created on: 2023. ápr. 9.
- *      Author: kaszonyl
+ *  Created on: 2023. Ã¡pr. 9.
+ *      Author: codingnextlevel
  */
 
 #ifndef CAN_UTILS_H_
@@ -24,3 +24,4 @@ typedef struct{
 
 
 #endif /* CAN_UTILS_H_ */
+
